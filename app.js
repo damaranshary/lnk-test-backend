@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import authRoute from "./routes/auth.route.js";
+import emailRoute from "./routes/email.route.js";
 
 try {
   mongoose.connect(process.env.MONGODB_URI);
@@ -25,6 +26,7 @@ app.use(
 );
 
 app.use("/api/v1", authRoute);
+app.use("/api/v1/email", emailRoute)
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the API" });

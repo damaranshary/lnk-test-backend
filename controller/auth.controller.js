@@ -25,16 +25,20 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const user = User.findByCredentials(req.body.email, req.body.password);
+    const user = await User.findByCredentials(req.body.email, req.body.password);
 
     const token = await user.generateAuthToken();
 
     // creating timestamps everytime the user logged in
-    await logging.createLogging({
+    const loggingResult = await logging.createLogging({
       email: user.email,
       action: "login",
       timestamp: new Date(),
     });
+
+    if (loggingResult instanceof Error) {
+      throw new Error("Logging failed");
+    }
 
     res.send({
       name: user.name,
@@ -42,7 +46,7 @@ const login = async (req, res) => {
       token,
     });
   } catch (err) {
-    res.send(400).send(err);
+    res.status(400).send(err);
   }
 };
 
