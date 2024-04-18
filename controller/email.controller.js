@@ -33,21 +33,37 @@ const sendEmail = async (req, res) => {
 
 const getInboxEmail = async (req, res) => {
   try {
-    const inbox = await EmailData.find({ recipient: req.user.email });
+    const inbox = await EmailData.find({ recipient: req.user.email }).sort({
+      timestamp: "desc",
+    });
 
-    res.status(200).send({ status: "success", data: inbox });
+    res
+      .status(200)
+      .send({
+        status: "success",
+        data: inbox,
+        message: "Get Inbox successfully",
+      });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send({ status: "failed", message: err.message });
   }
 };
 
 const getSentEmail = async (req, res) => {
   try {
-    const sent = await EmailData.find({ sender: req.user.email });
+    const sent = await EmailData.find({ sender: req.user.email }).sort({
+      timestamp: "desc",
+    });
 
     res.status(200).send({ status: "success", data: sent });
   } catch (err) {
-    res.status(400).send(err);
+    res
+      .status(400)
+      .send({
+        status: "failed",
+        message: err.message,
+        message: "Get Sent Email successfully",
+      });
   }
 };
 

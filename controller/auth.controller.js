@@ -11,21 +11,24 @@ const register = async (req, res) => {
 
     await user.save();
 
-    const token = await user.generateAuthToken();
-
     res.status(201).send({
-      name: user.name,
-      email: user.email,
-      token,
+      status: "success",
+      message: "Registered successfully",
     });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send({
+      status: "error",
+      message: err.message,
+    });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const user = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
 
     const token = await user.generateAuthToken();
 
@@ -41,12 +44,20 @@ const login = async (req, res) => {
     }
 
     res.send({
-      name: user.name,
-      email: user.email,
-      token,
+      status: "success",
+      data: {
+        name: user.name,
+        email: user.email,
+        accessToken: token,
+      },
+      message: "Logged in successfully",
     });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send({
+      status: "failed",
+      data: null,
+      message: err.message,
+    });
   }
 };
 
@@ -63,11 +74,26 @@ const logout = async (req, res) => {
 
     await req.user.save();
     res.send({
-      message: "Logged out",
+      status: "success",
+      message: "Logged out successfully",
     });
-  } catch (error) {
-    res.status(500).send(error);
+  } catch (err) {
+    res.status(500).send({
+      status: "failed",
+      message: err.message,
+    });
   }
 };
 
-export default { register, login, logout };
+const getProfile = async (req, res) => {
+  res.send({
+    status: "success",
+    data: {
+      name: req.user.name,
+      email: req.user.email,
+    },
+    message: "Get profile successfully",
+  });
+}
+
+export default { register, login, logout, getProfile };

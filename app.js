@@ -25,7 +25,7 @@ app.use(
   })
 );
 
-app.use("/api/v1", authRoute);
+app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/email", emailRoute)
 
 app.get("/", (req, res) => {
