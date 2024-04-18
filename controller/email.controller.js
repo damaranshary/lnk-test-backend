@@ -6,12 +6,16 @@ const sendEmail = async (req, res) => {
   try {
     const { recipient, subject, description } = req.body;
 
-    const isRecepientExists = await User.findOne({
+    if (sender === recipient) {
+      throw new Error("You can't send email to yourself");
+    }
+
+    const recipientData = await User.findOne({
       email: recipient,
     });
 
-    if (!isRecepientExists) {
-      throw new Error("Recipient email not found");
+    if (!recipientData) {
+      throw new Error("Recipient not found");
     }
 
     const emailData = new EmailData({
@@ -37,13 +41,11 @@ const getInboxEmail = async (req, res) => {
       timestamp: "desc",
     });
 
-    res
-      .status(200)
-      .send({
-        status: "success",
-        data: inbox,
-        message: "Get Inbox successfully",
-      });
+    res.status(200).send({
+      status: "success",
+      data: inbox,
+      message: "Get Inbox successfully",
+    });
   } catch (err) {
     res.status(400).send({ status: "failed", message: err.message });
   }
@@ -57,13 +59,11 @@ const getSentEmail = async (req, res) => {
 
     res.status(200).send({ status: "success", data: sent });
   } catch (err) {
-    res
-      .status(400)
-      .send({
-        status: "failed",
-        message: err.message,
-        message: "Get Sent Email successfully",
-      });
+    res.status(400).send({
+      status: "failed",
+      message: err.message,
+      message: "Get Sent Email successfully",
+    });
   }
 };
 

@@ -2,19 +2,7 @@ import { body, validationResult } from "express-validator";
 import User from "../model/user.model.js";
 
 const validateEmailRequest = [
-  body("recipient").custom(async (value) => {
-    const isRecipientExists = await User.findOne({
-      email: value,
-    });
-    if (!isRecipientExists) {
-      return Promise.reject("Recipient email not found");
-    }
-  }),
-  body("recipient").custom(async (value, { req }) => {
-    if (value === req.user.email) {
-      return Promise.reject("You cannot send an email to yourself");
-    }
-  }),
+  body("recipient").notEmpty().withMessage("Recipient is required"),    
   body("subject").notEmpty().withMessage("Subject is required"),
   body("description").notEmpty().withMessage("Description is required"),
 
