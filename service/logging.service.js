@@ -8,12 +8,10 @@ const createLogging = async (obj) => {
       timestamp: obj.timestamp,
     });
 
-    console.log(obj)
     await logHistory.save();
 
     return null;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
